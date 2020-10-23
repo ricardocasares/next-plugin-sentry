@@ -17,6 +17,6 @@
   "dependencies": {
     "@sentry/integrations": "5.27.0",
     "@sentry/node": "5.27.0",
-    "@sentry/react": "5.27.0"
+    "@sentry/browser": "5.27.0"
   }
 }
