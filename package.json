@@ -1,5 +1,5 @@
 {
-  "name": "next-plugin-sentry",
+  "name": "@next/plugin-sentry",
   "version": "1.0.0",
   "main": "index.js",
   "repository": "https://github.com/kamilogorek/next-plugin-sentry.git",
@@ -7,9 +7,7 @@
   "license": "MIT",
   "nextjs": {
     "name": "Sentry",
-    "required-env": [
-      "SENTRY_DSN"
-    ]
+    "required-env": ["SENTRY_DSN"]
   },
   "peerDependencies": {
     "next": "*"
