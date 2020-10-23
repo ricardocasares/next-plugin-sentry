@@ -1,8 +1,6 @@
 import * as Sentry from "@sentry/browser";
 
-export default async function onErrorClient(...args) {
+export default async function onErrorClient({ err }) {
   console.log("on-error-client");
-  console.log("hook args:", ...args);
-
-  Sentry.captureException(args[0].err || args[0]);
+  Sentry.captureException(err);
 }
