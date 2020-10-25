@@ -19,7 +19,7 @@ Provide necessary env variables through `.env` or any other way
 ```
 NEXT_PUBLIC_SENTRY_DSN
 
-// variables below are required only when using with source maps upload
+// variables below are required only when using with @next/sentry-source-maps
 NEXT_PUBLIC_SENTRY_RELEASE
 SENTRY_PROJECT
 SENTRY_ORG
@@ -31,50 +31,64 @@ SENTRY_AUTH_TOKEN
 Create a next.config.js
 
 ```js
+// next.config.js
 module.exports = {
   experimental: { plugins: true }
 }
 ```
 
-## Source Maps
-
-Upload source maps to Sentry during production build in your Next.js project
-
-Create a next.config.js
+With only that, you'll get a complete error coverage for your application.
+If you want to use Sentry SDK APIs, you can do so in both, server-side and client-side code with the same namespace from the plugin.
 
 ```js
-const { withSentrySourceMaps } = require('kamilogorek/next-plugin-sentry');
+import { Sentry } from '@next/plugin-sentry'
 
-module.exports = withSentrySourceMaps({
-  webpack(config, options) {
-    return config
+const MyComponent = () => <h1>Server Test 1</h1>
+
+export function getServerSideProps() {
+  if (!this.veryImportantValue) {
+    Sentry.withScope((scope) => {
+      scope.setTag('method', 'getServerSideProps')
+      Sentry.captureMessage('veryImportantValue is missing')
+    })
   }
-})
+
+  return {}
+}
+
+export default MyComponent
 ```
 
-Then you can run a regular build command and source maps will be outputted and uploaded to Sentry for the bundles
+### Configuration
 
-```bash
-npm run build
-```
-
-### Configuring plugin
-
-If you want to configure Sentry Webpack Plugin, you need to use non-preconfigured version of wrappers instead.
+There are two ways to configure Sentry SDK. One through `next.config.js` which allows for the full configuration of the server-side code, and partial configuration of client-side code. And additional method for client-side code.
 
 ```js
-const { withSentry, withSourceMaps } = require('kamilogorek/next-plugin-sentry');
+// next.config.js
+module.exports = {
+  experimental: { plugins: true },
+  // Sentry.init config for server-side code. Can accept any available config option.
+  serverRuntimeConfig: {
+    sentry: {
+      type: 'server',
+    },
+  },
+  // Sentry.init config for client-side code (and fallback for server-side)
+  // can accept only serializeable values. For more granular control see below.
+  publicRuntimeConfig: {
+    sentry: {
+      type: 'client',
+    },
+  },
+}
+```
 
-const sentry = withSentry({
-  configKey: 'configValue'
-})
-const sourceMaps = withSourceMaps({
-  devtool: 'hidden-source-map'
-})
+If you need to pass config options for the client-side, that are non-serializable, for example `beforeSend` or `beforeBreadcrumb`:
 
-module.exports = sentry(sourceMaps({
-  webpack(config, options) {
-    return config
-  }
-}))
+```js
+// _app.js
+import { clientConfig } from '@next/plugin-sentry'
+
+clientConfig.beforeSend = () => { /* ... */ }
+clientConfig.beforeBreadcrumb = () => { /* ... */ }
 ```
