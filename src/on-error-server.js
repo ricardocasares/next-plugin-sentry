@@ -3,25 +3,26 @@ import getConfig from "next/config";
 
 const { parseRequest } = Handlers;
 
-export default async function onErrorServer({ err, req, res }) {
+export default async function onErrorServer(err) {
   console.log("on-error-server");
 
-  const { serverRuntimeConfig = {}, publicRuntimeConfig = {} } = getConfig();
+  const { serverRuntimeConfig = {}, publicRuntimeConfig = {} } =
+    getConfig() || {};
   const sentryTimeout =
     serverRuntimeConfig.sentryTimeout ||
     publicRuntimeConfig.sentryTimeout ||
     2000;
 
   withScope((scope) => {
-    if (req) {
+    if (typeof err.req !== "undefined") {
       scope.addEventProcessor((event) =>
-        parseRequest(event, req, {
+        parseRequest(event, err.req, {
           // 'cookies' and 'query_string' use `dynamicRequire` which has a bug in SSR envs right now — Kamil
           request: ["data", "headers", "method", "url"],
         })
       );
     }
-    captureException(err);
+    captureException(err instanceof Error ? err : err.err);
   });
 
   await flush(sentryTimeout);
