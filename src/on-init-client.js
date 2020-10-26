@@ -7,7 +7,7 @@ import { clientConfig } from "../config";
 export default async function initClient() {
   console.log("on-init-client");
 
-  const { publicRuntimeConfig } = getConfig();
+  const { publicRuntimeConfig = {} } = getConfig();
   const runtimeConfig = publicRuntimeConfig.sentry || {};
 
   init({

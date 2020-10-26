@@ -6,7 +6,7 @@ const { parseRequest } = Handlers;
 export default async function onErrorServer({ err, req, res }) {
   console.log("on-error-server");
 
-  const { serverRuntimeConfig, publicRuntimeConfig } = getConfig();
+  const { serverRuntimeConfig = {}, publicRuntimeConfig = {} } = getConfig();
   const sentryTimeout =
     serverRuntimeConfig.sentryTimeout ||
     publicRuntimeConfig.sentryTimeout ||

@@ -8,7 +8,7 @@ import { serverConfig } from "../config";
 export default async function initServer() {
   console.log("on-init-server");
 
-  const { serverRuntimeConfig, publicRuntimeConfig } = getConfig();
+  const { serverRuntimeConfig = {}, publicRuntimeConfig = {} } = getConfig();
   const runtimeConfig =
     serverRuntimeConfig.sentry || publicRuntimeConfig.sentry || {};
 
