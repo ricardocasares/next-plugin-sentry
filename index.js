@@ -1,5 +1,10 @@
 const { serverConfig, clientConfig } = require("./config.js");
 
-exports.Sentry = require("@sentry/minimal");
+const Sentry = require("@sentry/minimal");
+Sentry.showReportDialog = (...args) => {
+  Sentry._callOnClient("showReportDialog", ...args);
+};
+
+exports.Sentry = Sentry;
 exports.serverConfig = serverConfig;
 exports.clientConfig = clientConfig;
