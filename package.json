@@ -1,6 +1,6 @@
 {
   "name": "@next/plugin-sentry",
-  "version": "10.1.2",
+  "version": "10.1.3",
   "main": "index.js",
   "repository": "https://github.com/kamilogorek/next-plugin-sentry.git",
   "author": "Kamil Ogórek <kamil.ogorek@gmail.com>",
